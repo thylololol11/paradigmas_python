@@ -5,11 +5,13 @@ from os.path import exists
 from collections import Counter
 from functools import reduce
 
+
 @dataclass
 class Ingrediente:
     nombre: str
     cantidad: float
     unidad: str
+
 
 @dataclass
 class Receta:
@@ -17,56 +19,78 @@ class Receta:
     receta: str
     ingredientes: List[Ingrediente]
 
+
 def cargar_menu_desde_json(json_str):
     data = json.loads(json_str)
-    return list(map(
-        lambda item: Receta(
-            dia=item["dia"],
-            receta=item["receta"],
-            ingredientes=list(map(lambda i: Ingrediente(i["nombre"], i["cantidad"], i["unidad"]), item["ingredientes"]))
-        ),
-        data
-    ))
+    return list(
+        map(
+            lambda item: Receta(
+                dia=item["dia"],
+                receta=item["receta"],
+                ingredientes=list(
+                    map(
+                        lambda i: Ingrediente(i["nombre"], i["cantidad"], i["unidad"]),
+                        item["ingredientes"],
+                    )
+                ),
+            ),
+            data,
+        )
+    )
+
 
 def cargar_inventario_desde_json(json_str):
     data = json.loads(json_str)
-    return list(map(lambda i: Ingrediente(i["nombre"], i["cantidad"], i["unidad"]), data))
+    return list(
+        map(lambda i: Ingrediente(i["nombre"], i["cantidad"], i["unidad"]), data)
+    )
+
 
 def mostrar_menu_json(menu):
     return json.dumps(
-        list(map(
-            lambda receta: {
-                "dia": receta.dia,
-                "receta": receta.receta,
-                "ingredientes": list(map(lambda ing: {
-                    "nombre": ing.nombre,
-                    "cantidad": ing.cantidad,
-                    "unidad": ing.unidad
-                }, receta.ingredientes))
-            },
-            menu
-        )),
+        list(
+            map(
+                lambda receta: {
+                    "dia": receta.dia,
+                    "receta": receta.receta,
+                    "ingredientes": list(
+                        map(
+                            lambda ing: {
+                                "nombre": ing.nombre,
+                                "cantidad": ing.cantidad,
+                                "unidad": ing.unidad,
+                            },
+                            receta.ingredientes,
+                        )
+                    ),
+                },
+                menu,
+            )
+        ),
         indent=2,
-        ensure_ascii=False
+        ensure_ascii=False,
     )
+
 
 def mostrar_inventario_json(inventario):
     return json.dumps(
-        list(map(lambda ing: {
-            "nombre": ing.nombre,
-            "cantidad": ing.cantidad,
-            "unidad": ing.unidad
-        }, inventario)),
+        list(
+            map(
+                lambda ing: {
+                    "nombre": ing.nombre,
+                    "cantidad": ing.cantidad,
+                    "unidad": ing.unidad,
+                },
+                inventario,
+            )
+        ),
         indent=2,
-        ensure_ascii=False
+        ensure_ascii=False,
     )
 
+
 def generar_lista_compras(menu, inventario):
-    todos_ingredientes = reduce(
-        lambda acc, receta: acc + receta.ingredientes,
-        menu,
-        []
-    )
+    todos_ingredientes = reduce(lambda acc, receta: acc + receta.ingredientes, menu, [])
 
     necesarios = Counter()
     unidades = {}
@@ -77,25 +101,35 @@ def generar_lista_compras(menu, inventario):
     disponibles = Counter({ing.nombre: ing.cantidad for ing in inventario})
 
     faltantes = filter(
-        lambda nombre: necesarios[nombre] > disponibles[nombre],
-        necesarios
+        lambda nombre: necesarios[nombre] > disponibles[nombre], necesarios
     )
 
-    return list(map(
-        lambda nombre: Ingrediente(nombre, necesarios[nombre] - disponibles[nombre], unidades[nombre]),
-        faltantes
-    ))
+    return list(
+        map(
+            lambda nombre: Ingrediente(
+                nombre, necesarios[nombre] - disponibles[nombre], unidades[nombre]
+            ),
+            faltantes,
+        )
+    )
+
 
 def mostrar_lista_compras_json(lista):
     return json.dumps(
-        list(map(lambda ing: {
-            "nombre": ing.nombre,
-            "cantidad": ing.cantidad,
-            "unidad": ing.unidad
-        }, lista)),
+        list(
+            map(
+                lambda ing: {
+                    "nombre": ing.nombre,
+                    "cantidad": ing.cantidad,
+                    "unidad": ing.unidad,
+                },
+                lista,
+            )
+        ),
         indent=2,
-        ensure_ascii=False
+        ensure_ascii=False,
     )
+
 
 def agregar_receta_desde_terminal():
     print("\nIngrese los datos de la nueva receta")
@@ -103,7 +137,9 @@ def agregar_receta_desde_terminal():
     nombre_receta = input("Nombre de la receta: ").strip()
     ingredientes = []
     while True:
-        nombre = input("Nombre del ingrediente (o presione ENTER para terminar): ").strip()
+        nombre = input(
+            "Nombre del ingrediente (o presione ENTER para terminar): "
+        ).strip()
         if nombre == "":
             break
         try:
@@ -113,6 +149,7 @@ def agregar_receta_desde_terminal():
         except ValueError:
             print("Cantidad inválida. Intente nuevamente.")
     return Receta(dia, nombre_receta, ingredientes)
+
 
 def agregar_ingrediente_inventario_desde_terminal():
     print("\nIngrese los datos del nuevo ingrediente para el inventario")
@@ -127,9 +164,11 @@ def agregar_ingrediente_inventario_desde_terminal():
     except ValueError:
         print("Cantidad inválida. No se agregó el ingrediente.")
 
+
 def guardar_json_en_archivo(nombre_archivo, json_str):
     with open(nombre_archivo, "w", encoding="utf-8") as f:
         f.write(json_str)
+
 
 def menu_principal():
     global menu, inventario
@@ -159,7 +198,9 @@ def menu_principal():
             agregar_ingrediente_inventario_desde_terminal()
         elif opcion == "6":
             guardar_json_en_archivo("menu.json", mostrar_menu_json(menu))
-            guardar_json_en_archivo("inventario.json", mostrar_inventario_json(inventario))
+            guardar_json_en_archivo(
+                "inventario.json", mostrar_inventario_json(inventario)
+            )
             print("Menú e inventario guardados correctamente.")
         elif opcion == "7":
             print("¡Hasta luego!")
@@ -167,12 +208,13 @@ def menu_principal():
         else:
             print("Opción no válida. Intente de nuevo.")
 
+
 # Intenta cargar desde archivos si existen
 if exists("menu.json"):
     with open("menu.json", "r", encoding="utf-8") as f:
         menu = cargar_menu_desde_json(f.read())
 else:
-    menu_json = '''
+    menu_json = """
     [
       {
         "dia": "lunes",
@@ -190,18 +232,18 @@ else:
           { "nombre": "tomate", "cantidad": 1, "unidad": "pieza" }
         ]
       }
-    ]'''
+    ]"""
     menu = cargar_menu_desde_json(menu_json)
 
 if exists("inventario.json"):
     with open("inventario.json", "r", encoding="utf-8") as f:
         inventario = cargar_inventario_desde_json(f.read())
 else:
-    inventario_json = '''
+    inventario_json = """
     [
       { "nombre": "tomate", "cantidad": 1, "unidad": "pieza" },
       { "nombre": "pasta", "cantidad": 100, "unidad": "gramos" }
-    ]'''
+    ]"""
     inventario = cargar_inventario_desde_json(inventario_json)
 
 # Iniciar menú

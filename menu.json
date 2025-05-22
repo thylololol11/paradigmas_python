@@ -1,0 +1,45 @@
+[
+  {
+    "dia": "lunes",
+    "receta": "ensalada",
+    "ingredientes": [
+      {
+        "nombre": "lechuga",
+        "cantidad": 1,
+        "unidad": "pieza"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 2,
+        "unidad": "pieza"
+      }
+    ]
+  },
+  {
+    "dia": "martes",
+    "receta": "pasta",
+    "ingredientes": [
+      {
+        "nombre": "pasta",
+        "cantidad": 200,
+        "unidad": "gramos"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "pieza"
+      }
+    ]
+  },
+  {
+    "dia": "viernes",
+    "receta": "helado",
+    "ingredientes": [
+      {
+        "nombre": "mango",
+        "cantidad": 2.0,
+        "unidad": "unidad"
+      }
+    ]
+  }
+]

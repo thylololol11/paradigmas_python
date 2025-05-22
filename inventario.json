@@ -1,0 +1,17 @@
+[
+  {
+    "nombre": "tomate",
+    "cantidad": 1,
+    "unidad": "pieza"
+  },
+  {
+    "nombre": "pasta",
+    "cantidad": 100,
+    "unidad": "gramos"
+  },
+  {
+    "nombre": "mango",
+    "cantidad": 5.0,
+    "unidad": "gramo"
+  }
+]

@@ -1,0 +1,17 @@
+version = 1
+
+[[analyzers]]
+name = "terraform"
+
+[[analyzers]]
+name = "python"
+
+  [analyzers.meta]
+  runtime_version = "3.x.x"
+
+[[analyzers]]
+name = "dart-analyze"
+type = "community"
+
+[[transformers]]
+name = "black"
